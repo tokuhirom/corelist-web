@@ -1,0 +1,10 @@
+: cascade 'layout.tx';
+: around body -> {
+
+<ul id="version-menu-body">
+: for $versions -> ($version) {
+    <li><a href="/v/<: $version :>"><: $version :></a></li>
+: }
+</ul>
+
+: }
