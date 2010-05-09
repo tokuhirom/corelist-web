@@ -55,7 +55,14 @@ sub app {
 
     my $content = $xslate->render($tmpl, \%params);
     $content = encode_utf8($content);
-    return [200, ['Content-Length' => length($content)], [$content]];
+    return [
+        200,
+        [
+            'Content-Length' => length($content),
+            'Content-Type'   => 'text/html; charset=utf-8'
+        ],
+        [$content]
+    ];
 }
 
 if ($0 eq __FILE__) {
