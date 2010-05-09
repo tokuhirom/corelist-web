@@ -21,6 +21,8 @@
             text-shadow: #eee 4px 4px 4px;
         }
         footer {
+            border-top: 1px solid #eee;
+            margin-top: 30px;
             font-size: xx-small;
         }
         .module {

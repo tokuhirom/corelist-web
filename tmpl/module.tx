@@ -1,0 +1,11 @@
+: cascade 'layout.tx';
+: around body -> {
+
+<h2><: $module :></h2>
+
+<table>
+:   for $data -> ($row) {
+        <tr><td><a href="/v/<: $row.perl :>"><: $row.perl :></a></td><td><: $row.module :></td></tr>
+:   }
+</table>
+: }

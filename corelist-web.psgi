@@ -3,7 +3,6 @@ use warnings;
 use 5.12.0;
 use Plack::Runner;
 use Module::CoreList;
-use Data::Section::Simple qw/get_data_section/;
 use Plack::Request;
 use Text::Xslate;
 use Path::Class;
@@ -21,6 +20,11 @@ sub app {
 
     # main
     given ($req->env->{PATH_INFO}) {
+        when ('/') {
+            my $q = $req->param('q') // 'Module::CoreList';
+            $params{q} = $q;
+            $params{first_release} = Module::CoreList->first_release($q);
+        }
         when ('/version-list') {
             $tmpl = 'version-list.tx';
             $params{versions} =
@@ -32,18 +36,21 @@ sub app {
             $params{version} = $version;
             # $params{modules} = $Module::CoreList::version{$1};
             my %modules = %{$Module::CoreList::version{$version}};
-            $params{mmm} = Text::Xslate::escaped_string(
-                join "\n",
-                map {
-                    sprintf( q{<tr><td align="left">%s</td><td>%s</td></tr>},
-                        $_, $modules{$_} // '' )
-                  } sort keys %modules
-            );
+            $params{module_keys} = [sort keys %modules];
+            $params{modules} = \%modules;
         }
-    }
-    if (my $q = $req->param('q')) {
-        $params{q} = $q;
-        $params{first_release} = Module::CoreList->first_release($q);
+        when (m{^/m/(.+)$}) {
+            my $module = $1;
+            $params{module} = $module;
+            $tmpl = 'module.tx';
+            my @data;
+            for my $v (reverse sort keys %Module::CoreList::version) {
+                my $modver = $Module::CoreList::version{$v}->{$module};
+                next unless $modver;
+                push @data, {perl => $v, module => $modver};
+            }
+            $params{data} = \@data;
+        }
     }
 
     my $content = $xslate->render($tmpl, \%params);

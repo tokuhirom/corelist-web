@@ -2,6 +2,11 @@
 : around body -> {
 <h2>core modules in version <: $version :></h2>
 <table>
-<: $mmm :>
+:   for $module_keys -> ($k) {
+        <tr>
+            <td align="left"><a href="/m/<: $k :>"><: $k :></a></td>
+            <td><: $modules[$k] // '' :></td>
+        </tr>
+:   }
 </table>
 : }
