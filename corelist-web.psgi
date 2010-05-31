@@ -7,10 +7,13 @@ use Plack::Request;
 use Text::Xslate;
 use Path::Class;
 use Encode qw/encode_utf8/;
+use File::Spec ();
+our $VERSION = '0.01';
 
 my $xslate = Text::Xslate->new(
     path  => [ file(__FILE__)->dir->file("tmpl") ],
-    cache => 0
+    cache => 1,
+    cache_dir => File::Spec->catdir(File::Spec->tmpdir(), "corelist.tmpl_cache.$<.$VERSION"),
 );
 
 sub app {
