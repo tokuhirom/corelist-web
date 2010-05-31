@@ -86,6 +86,7 @@ body here
 : }
         </section>
 
+        <div class="clear-both"></div>
         <footer>
             web interface for <a href="http://search.cpan.org/dist/Module-CoreList/">Module::CoreList</a>.
         </footer>
