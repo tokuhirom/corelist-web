@@ -4,10 +4,6 @@
     <title>perl5 module corelist</title>
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
     <script type="text/javascript">google.load("jquery", "1.4.2");</script>
-    <script type="text/javascript">
-        $(function () {
-        });
-    </script>
     <style>
         #container {
             width: 720px;
@@ -81,15 +77,4 @@
         </nav>
         <div class="clear-both"></div>
         <section id="content">
-: block body -> {
-body here
-: }
-        </section>
 
-        <div class="clear-both"></div>
-        <footer>
-            web interface for <a href="http://search.cpan.org/dist/Module-CoreList/">Module::CoreList</a>.
-        </footer>
-    </div>
-</body>
-</html>

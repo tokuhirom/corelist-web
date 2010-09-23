@@ -1,79 +1,49 @@
 use strict;
 use warnings;
 use 5.12.0;
-use Plack::Runner;
+use File::Basename;
+use lib dirname(__FILE__);
+use Tripel;
+
 use Module::CoreList;
-use Plack::Request;
-use Text::Xslate;
-use Path::Class;
-use Encode qw/encode_utf8/;
-use File::Spec ();
+
 our $VERSION = '0.01';
 
-my $xslate = Text::Xslate->new(
-    path  => [ file(__FILE__)->dir->file("tmpl") ],
-    cache => 1,
-    cache_dir => File::Spec->catdir(File::Spec->tmpdir(), "corelist.tmpl_cache.$<.$VERSION"),
-);
+get '/' => sub {
+    my ($c) = @_;
 
-sub app {
-    my $req = Plack::Request->new(shift);
-    my %params;
-    my $tmpl = 'index.tx';
+    my $q = $c->req->param('q') // 'Module::CoreList';
+    $c->render( 'index.tt',
+        { q => $q, first_release => Module::CoreList->first_release($q) } );
+};
 
-    # main
-    given ($req->env->{PATH_INFO}) {
-        when ('/') {
-            my $q = $req->param('q') // 'Module::CoreList';
-            $params{q} = $q;
-            $params{first_release} = Module::CoreList->first_release($q);
-        }
-        when ('/version-list') {
-            $tmpl = 'version-list.tx';
-            $params{versions} =
-              [ reverse sort keys %Module::CoreList::version ];
-        }
-        when (m{^/v/(.+)$}) {
-            $tmpl = 'version.tx';
-            my $version = $1;
-            $params{version} = $version;
-            # $params{modules} = $Module::CoreList::version{$1};
-            my %modules = %{$Module::CoreList::version{$version}};
-            $params{module_keys} = [sort keys %modules];
-            $params{modules} = \%modules;
-        }
-        when (m{^/m/(.+)$}) {
-            my $module = $1;
-            $params{module} = $module;
-            $tmpl = 'module.tx';
-            my @data;
-            for my $v (reverse sort keys %Module::CoreList::version) {
-                my $modver = $Module::CoreList::version{$v}->{$module};
-                next unless $modver;
-                push @data, {perl => $v, module => $modver};
-            }
-            $params{data} = \@data;
-        }
+get '/version-list' => sub {
+    my ($c) = @_;
+    $c->render( 'version-list.tt',
+        { versions => [ reverse sort keys %Module::CoreList::version ] } );
+};
+
+get '/v/{version}' => sub {
+    my ($c, $args) = @_;
+    my $version = $args->{version} // die;
+    my %modules = %{$Module::CoreList::version{$version}};
+    # $params{module_keys} = [sort keys %modules];
+    $c->render('version.tt', {version => $version, modules => \%modules});
+};
+
+get '/m/:module' => sub {
+    my ($c, $args) = @_;
+
+    my $module = $args->{module} // die;
+    my @data;
+    for my $v (reverse sort keys %Module::CoreList::version) {
+        my $modver = $Module::CoreList::version{$v}->{$module};
+        next unless $modver;
+        push @data, {perl => $v, module => $modver};
     }
 
-    my $content = $xslate->render($tmpl, \%params);
-    $content = encode_utf8($content);
-    return [
-        200,
-        [
-            'Content-Length' => length($content),
-            'Content-Type'   => 'text/html; charset=utf-8'
-        ],
-        [$content]
-    ];
-}
+    $c->render('module.tt', {data => \@data, module => $module});
+};
 
-if ($0 eq __FILE__) {
-    my $runner = Plack::Runner->new();
-    $runner->parse_options(@ARGV);
-    $runner->run(\&app);
-}
-
-no warnings 'void';
-\&app;
+to_app();
 
