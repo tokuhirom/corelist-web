@@ -17,6 +17,28 @@ get '/' => sub {
         { q => $q, first_release => Module::CoreList->first_release($q) } );
 };
 
+get '/api/v1/perl/list.{format:json}' => sub {
+    my ($c, $p) = @_;
+    return $c->render_json([ reverse sort keys %Module::CoreList::version ]);
+};
+
+get '/api/v1/perl/{version}.{format:json}' => sub {
+    my ($c, $p) = @_;
+    return $c->render_json($Module::CoreList::version{$p->{version}});
+};
+
+get '/api/v1/module/{module}.{format:json}' => sub {
+    my ($c, $p) = @_;
+
+    my @data;
+    for my $v (reverse sort keys %Module::CoreList::version) {
+        my $modver = $Module::CoreList::version{$v}->{$p->{module}};
+        next unless $modver;
+        push @data, {perl => $v, module => $modver};
+    }
+    return $c->render_json({releases => \@data, first_release => Module::CoreList->first_release($p->{dist})});
+};
+
 get '/version-list' => sub {
     my ($c) = @_;
     $c->render( 'version-list.tt',

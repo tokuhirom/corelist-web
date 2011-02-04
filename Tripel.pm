@@ -8,7 +8,9 @@ use File::Basename;
 use File::Spec;
 use 5.008001;
 
-our $VERSION='0.03';
+our $VERSION='0.04';
+
+our $CONTEXT;
 
 sub import {
     my $caller = caller(0);
@@ -39,6 +41,7 @@ sub import {
             my $env = shift;
             if ( my $route = $caller->router->match($env) ) {
                 my $c = Tripel::Context->new(env => $env, 'caller' => $caller, app_path => $app_path, config => $config, tmpl => $xslate);
+                local $CONTEXT = $c;
                 my $res = $route->{code}->($c, $route);
                 return $res->finalize();
             }
@@ -55,10 +58,12 @@ package Tripel::Context;
 use Mouse;
 use HTML::FillInForm::Lite;
 use Encode qw/encode_utf8/;
+use JSON;
 
 has req => (
     is      => 'ro',
     isa     => 'Tripel::Request',
+    lazy    => 1,
     default => sub { Tripel::Request->new( $_[0]->env ) }
 );
 has env      => ( is => 'ro', isa => 'HashRef', required => 1 );
@@ -78,6 +83,20 @@ sub render {
     my $self = shift;
     my $html = $self->tmpl->render(@_);
     return $self->make_html_response($html);
+}
+
+sub render_json {
+    my ($self, $stuff) = @_;
+
+    my $json = encode_json($stuff);
+    return Tripel::Response->new(
+        200,
+        [
+            'Content-Length' => length($json),
+            'Content-Type'   => 'application/json; charset=utf-8'
+        ],
+        [$json]
+    );
 }
 
 sub make_html_response {
