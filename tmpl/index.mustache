@@ -1,17 +1,17 @@
 {{> include/header }}
 
 <form method="get" action="/">
-    <input type="text" name="q" value="{{q}}" />
+    <input type="text" name="q" value="{{module}}" />
     <input type="submit" value="when?" />
 </form>
 
-{{#q}}
+{{#module}}
     {{#first_release}}
-    <span class="module">{{ q }}</span> was first released with perl <a class="version" href="/v/{{ first_release }}">{{ first_release }}</a>
+    <span class="module">{{module}}</span> was first released with perl <a class="version" href="/v/{{ first_release }}">{{ first_release }}</a>
     {{/first_release}}
     {{^first_release}}
-    <span class="module">{{ q }}</span> was not in CORE (or so I think)
+    <span class="module">{{module}}</span> was not in CORE (or so I think)
     {{/first_release}}
-{{/q}}
+{{/module}}
 
 {{> include/footer }}
