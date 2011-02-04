@@ -1,0 +1,13 @@
+{{> include/header }}
+
+<h2>core modules in version {{ version }}</h2>
+<table>
+    {{#modules}}
+        <tr>
+            <td align="left"><a href="/m/{{ module }}">{{ module }}</a></td>
+            <td>{{ version }}</td>
+        </tr>
+    {{/modules}}
+</table>
+
+{{> include/footer }}

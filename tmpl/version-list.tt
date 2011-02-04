@@ -1,9 +1,0 @@
-[% INCLUDE 'include/header.tt' %]
-
-<ul id="version-menu-body">
-    [% FOR version IN versions %]
-        <li><a href="/v/[% version %]">[% version %]</a></li>
-    [% END %]
-</ul>
-
-[% INCLUDE 'include/footer.tt' %]

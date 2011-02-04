@@ -1,0 +1,11 @@
+{{> include/header }}
+
+<h2>{{ module }}</h2>
+
+<table>
+    {{#data}}
+        <tr><td><a href="/v/{{ perl }}">{{ perl }}</a></td><td>{{ module }}</td></tr>
+    {{/data}}
+</table>
+
+{{> include/footer }}

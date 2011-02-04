@@ -13,7 +13,7 @@ get '/' => sub {
     my ($c) = @_;
 
     my $q = $c->req->param('q') // 'Module::CoreList';
-    $c->render( 'index.tt',
+    $c->render( 'index.mustache',
         { q => $q, first_release => Module::CoreList->first_release($q) } );
 };
 
@@ -41,16 +41,17 @@ get '/api/v1/module/{module}.{format:json}' => sub {
 
 get '/version-list' => sub {
     my ($c) = @_;
-    $c->render( 'version-list.tt',
-        { versions => [ reverse sort keys %Module::CoreList::version ] } );
+    $c->render( 'version-list.mustache',
+        { versions => [ map { +{ version => $_ } } reverse sort keys %Module::CoreList::version ] } );
 };
 
 get '/v/{version}' => sub {
     my ($c, $args) = @_;
     my $version = $args->{version} // die;
     my %modules = %{$Module::CoreList::version{$version}};
+    my @modules = map { +{ module => $_, version => $modules{$_} } } sort keys %modules;
     # $params{module_keys} = [sort keys %modules];
-    $c->render('version.tt', {version => $version, modules => \%modules});
+    $c->render('version.mustache', {version => $version, modules => \@modules});
 };
 
 get '/m/:module' => sub {
@@ -64,7 +65,7 @@ get '/m/:module' => sub {
         push @data, {perl => $v, module => $modver};
     }
 
-    $c->render('module.tt', {data => \@data, module => $module});
+    $c->render('module.mustache', {data => \@data, module => $module});
 };
 
 to_app();
