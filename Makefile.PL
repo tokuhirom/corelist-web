@@ -1,9 +1,9 @@
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME          => 'Foo',
+    NAME          => 'corelist web',
     AUTHOR        => 'Some Person <person@example.com>',
-    VERSION_FROM  => 'lib/Foo.pm',
+    VERSION_FROM  => 'app.psgi',
     PREREQ_PM     => {
         'Amon2'                           => '2.35',
         'Text::Xslate'                    => '1.1005',

@@ -8,7 +8,7 @@ use Tripel;
 
 use Module::CoreList;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 get '/api/v1/perl/list.{format:json}' => sub {
     my ($c, $p) = @_;
