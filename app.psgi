@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use 5.12.0;
+use 5.010001;
 use File::Basename;
 use Cwd;
 use lib Cwd::abs_path(dirname(__FILE__));
