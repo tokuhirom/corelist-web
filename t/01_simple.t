@@ -6,7 +6,7 @@ use Test::WWW::Mechanize::PSGI;
 use Plack::Util;
 use JSON;
 
-my $app = Plack::Util::load_psgi 'corelist-web.psgi';
+my $app = Plack::Util::load_psgi 'app.psgi';
 my $mech = Test::WWW::Mechanize::PSGI->new(app => $app);
 
 $mech->get_ok('/api/v1/perl/list.json');
