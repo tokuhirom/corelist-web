@@ -2,12 +2,13 @@ use strict;
 use warnings;
 use 5.010001;
 use File::Basename;
-use lib dirname(__FILE__);
-use Tripel;
+use Amon2::Lite;
 
 use Module::CoreList;
 
 our $VERSION = '0.02';
+
+__PACKAGE__->load_plugin('Web::JSON');
 
 get '/' => sub {
     my ($c) = @_;
@@ -19,6 +20,7 @@ get '/' => sub {
 
 get '/api/v1/perl/list.{format:json}' => sub {
     my ($c, $p) = @_;
+    warn $c;
     return $c->render_json([ reverse sort keys %Module::CoreList::version ]);
 };
 
@@ -36,7 +38,12 @@ get '/api/v1/module/{module}.{format:json}' => sub {
         next unless $modver;
         push @data, {perl => $v, module => $modver};
     }
-    return $c->render_json({releases => \@data, first_release => Module::CoreList->first_release($p->{dist})});
+    return $c->render_json(
+        {
+            releases      => \@data,
+            first_release => Module::CoreList->first_release( $p->{dist} )
+        }
+    );
 };
 
 get '/version-list' => sub {
@@ -67,5 +74,5 @@ get '/m/:module' => sub {
     $c->render('module.tt', {data => \@data, module => $module});
 };
 
-to_app();
+__PACKAGE__->to_app();
 
