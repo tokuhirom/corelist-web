@@ -2,11 +2,11 @@ use strict;
 use warnings;
 
 package Tripel;
+use Text::Xslate;
 use Router::Simple::Sinatraish ();
 use File::Basename;
 use File::Spec;
 use 5.008001;
-use Template::Mustache;
 
 our $VERSION='0.04';
 
@@ -22,7 +22,11 @@ sub import {
     *{"${caller}::res"}          = sub { Tripel::Response->new(@_) };
     *{"${caller}::to_app"}  = sub {
         # setup
-        my $mustache = Template::Mustache->new();
+        my $xslate = Text::Xslate->new(
+            syntax => 'TTerse',
+            path => [ File::Spec->catfile($app_path, 'tmpl') ],
+            module => ['Text::Xslate::Bridge::TT2Like'],
+        );
         my $config = do {
             my $env = $ENV{PLACK_ENV} || 'development';
             my $conf = File::Spec->catfile($app_path, 'config', "$env.pl");
@@ -36,9 +40,8 @@ sub import {
         my $app = sub {
             my $env = shift;
             if ( my $route = $caller->router->match($env) ) {
-                my $c = Tripel::Context->new(env => $env, 'caller' => $caller, app_path => $app_path, config => $config, tmpl => $mustache);
+                my $c = Tripel::Context->new(env => $env, 'caller' => $caller, app_path => $app_path, config => $config, tmpl => $xslate);
                 local $CONTEXT = $c;
-                local $Template::Mustache::template_path = File::Spec->catfile($app_path, 'tmpl');
                 my $res = $route->{code}->($c, $route);
                 return $res->finalize();
             }
@@ -76,13 +79,9 @@ sub render_with_fillin_form {
        $html = HTML::FillInForm::Lite->fill( \$html, $fdat );
     return $self->make_html_response($html);
 }
-use IO::File;
 sub render {
-    my ($self, $path) = (shift, shift);
-      $path = File::Spec->catfile($self->app_path, 'tmpl', $path);
-    my $fh = IO::File->new($path, 'r');
-    my $src = do { local $/; <$fh> };
-    my $html = $self->tmpl->render($src, @_);
+    my $self = shift;
+    my $html = $self->tmpl->render(@_);
     return $self->make_html_response($html);
 }
 

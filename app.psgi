@@ -2,38 +2,29 @@ use strict;
 use warnings;
 use 5.010001;
 use File::Basename;
-use Cwd;
-use lib Cwd::abs_path(dirname(__FILE__));
+use lib dirname(__FILE__);
 use Tripel;
 
 use Module::CoreList;
 
 our $VERSION = '0.02';
 
+get '/' => sub {
+    my ($c) = @_;
+
+    my $q = $c->req->param('q') // 'Module::CoreList';
+    $c->render( 'index.tt',
+        { q => $q, first_release => Module::CoreList->first_release($q) } );
+};
+
 get '/api/v1/perl/list.{format:json}' => sub {
     my ($c, $p) = @_;
-    return $c->render_json(
-        {
-            versions => [
-                map { +{ version => $_ } }
-                  reverse sort keys %Module::CoreList::version
-            ]
-        }
-    );
+    return $c->render_json([ reverse sort keys %Module::CoreList::version ]);
 };
 
 get '/api/v1/perl/{version}.{format:json}' => sub {
     my ($c, $p) = @_;
-    my @modules =
-      map { +{ module => $_, version => $Module::CoreList::version{$p->{version}}->{$_} } }
-      sort keys %{ $Module::CoreList::version{$p->{version}} };
-
-    return $c->render_json(
-        {
-            version => $p->{version},
-            modules => \@modules,
-        }
-    );
+    return $c->render_json($Module::CoreList::version{$p->{version}});
 };
 
 get '/api/v1/module/{module}.{format:json}' => sub {
@@ -45,62 +36,36 @@ get '/api/v1/module/{module}.{format:json}' => sub {
         next unless $modver;
         push @data, {perl => $v, module => $modver};
     }
-    return $c->render_json(
-        {
-            releases      => \@data,
-            first_release => Module::CoreList->first_release( $p->{module} ) || undef,
-            module        => $p->{module}
-        }
-    );
-};
-
-# -------------------------------------------------------------------------
-
-sub p { require Data::Dumper; print STDERR Data::Dumper::Dumper(@_) }
-
-get '/' => sub {
-    my ($c) = @_;
-
-    my $q = $c->req->param('q') // 'Module::CoreList';
-    my $res = $c->call("/api/v1/module/$q.json");
-    $c->render( 'index.mustache', $res );
+    return $c->render_json({releases => \@data, first_release => Module::CoreList->first_release($p->{dist})});
 };
 
 get '/version-list' => sub {
     my ($c) = @_;
-    my $res = $c->call("/api/v1/perl/list.json");
-    $c->render( 'version-list.mustache', $res );
+    $c->render( 'version-list.tt',
+        { versions => [ reverse sort keys %Module::CoreList::version ] } );
 };
 
 get '/v/{version}' => sub {
-    my ($c, $p) = @_;
-    my $res = $c->call("/api/v1/perl/$p->{version}.json");
-
-    $c->render('version.mustache', $res);
+    my ($c, $args) = @_;
+    my $version = $args->{version} // die;
+    my %modules = %{$Module::CoreList::version{$version}};
+    # $params{module_keys} = [sort keys %modules];
+    $c->render('version.tt', {version => $version, modules => \%modules});
 };
 
 get '/m/:module' => sub {
-    my ($c, $p) = @_;
+    my ($c, $args) = @_;
 
-    my $res = $c->call("/api/v1/module/$p->{module}.json");
-
-    $c->render('module.mustache', $res);
-};
-
-use JSON;
-sub Tripel::Context::call {
-    my ($self, $endpoint) = @_;
-    my $res = __PACKAGE__->to_app()->({
-        REQUEST_URI => $endpoint,
-        PATH_INFO   => $endpoint,
-        map { $_ => $self->env->{$_} } qw/HTTP_HOST HTTP_USER_AGENT REQUEST_METHOD SCRIPT_NAME/
-    });
-    if ($res->[0] eq '200') {
-        return decode_json($res->[2]->[0]);
-    } else {
-        return;
+    my $module = $args->{module} // die;
+    my @data;
+    for my $v (reverse sort keys %Module::CoreList::version) {
+        my $modver = $Module::CoreList::version{$v}->{$module};
+        next unless $modver;
+        push @data, {perl => $v, module => $modver};
     }
-}
+
+    $c->render('module.tt', {data => \@data, module => $module});
+};
 
 to_app();
 

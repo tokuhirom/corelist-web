@@ -1,0 +1,13 @@
+[% INCLUDE 'include/header.tt' %]
+
+<h2>core modules in version [% version %]</h2>
+<table>
+    [% FOR k IN modules.keys().sort() %]
+        <tr>
+            <td align="left"><a href="/m/[% k %]">[% k %]</a></td>
+            <td>[% modules.$k %]</td>
+        </tr>
+    [% END %]
+</table>
+
+[% INCLUDE 'include/footer.tt' %]

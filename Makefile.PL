@@ -11,7 +11,7 @@ WriteMakefile(
         'Plack::Middleware::ReverseProxy' => '0.09',
         'HTML::FillInForm::Lite'          => '1.09',
         'Time::Piece'                     => '1.20',
-		(map { $_ => 0 } qw(JSON Plack HTML::FillInForm::Lite JSON Module::CoreList Mouse Router::Simple::Sinatraish Template::Mustache Test::WWW::Mechanize::PSGI parent)),
+		(map { $_ => 0 } qw(JSON Plack HTML::FillInForm::Lite JSON Module::CoreList Mouse Router::Simple::Sinatraish Test::WWW::Mechanize::PSGI parent)),
     },
     MIN_PERL_VERSION => '5.008001',
     (-d 'xt' and $ENV{AUTOMATED_TESTING} || $ENV{RELEASE_TESTING}) ? (
