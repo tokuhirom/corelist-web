@@ -1,0 +1,5 @@
+    sudo ln -s /usr/local/webapp/corelist-web/etc/httpd/corelist.64p.org.conf /etc/nginx/sites-enabled/corelist.64p.org.conf
+    sudo ln -s /usr/local/webapp/corelist-web/etc/init/corelist.64p.org.conf /etc/init/corelist.64p.org.conf
+    sudo /etc/init.d/nginx reload
+    sudo initctl reload-configuration
+    sudo start corelist.64p.org
