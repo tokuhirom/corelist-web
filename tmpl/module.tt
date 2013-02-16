@@ -1,7 +1,8 @@
 [% INCLUDE 'include/header.tt' %]
 
 
-<h2>[% module %]</h2>
+<h2>[% module %] - <a href="https://metacpan.org/module/[% module %]">goto &metacpan;</a></h2>
+
 
 <table>
     [% FOR row IN data %]

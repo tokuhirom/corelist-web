@@ -11,6 +11,15 @@
     [% ELSE %]
     <span class="module">[% q %]</span> was not in CORE (or so I think)
     [% END %]
+
+    <table>
+    [% FOR release IN releases %]
+        <tr>
+        <td><a href="/v/[% release.perl %]">[% release.perl %]</a></td>
+        <td>[% release.module %]</td>
+        </tr>
+    [% END %]
+    </table>
 [% END %]
 
 [% INCLUDE 'include/footer.tt' %]
