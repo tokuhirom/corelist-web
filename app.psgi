@@ -20,7 +20,6 @@ get '/' => sub {
 
 get '/api/v1/perl/list.{format:json}' => sub {
     my ($c, $p) = @_;
-    warn $c;
     return $c->render_json([ reverse sort keys %Module::CoreList::version ]);
 };
 
