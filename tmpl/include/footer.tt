@@ -1,9 +1,9 @@
-        </section>
+            <hr />
+            <div class="footer" style="text-align: right">
+                Web interface for <a href="http://search.cpan.org/dist/Module-CoreList/">Module::CoreList</a>.
+            </div>
 
-        <div class="clear-both"></div>
-        <footer>
-            web interface for <a href="http://search.cpan.org/dist/Module-CoreList/">Module::CoreList</a>.
-        </footer>
+        </div><!-- /.container -->
     </div>
 </body>
 </html>

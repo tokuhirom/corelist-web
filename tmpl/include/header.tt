@@ -2,79 +2,24 @@
 <html>
 <head>
     <title>perl5 module corelist</title>
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-    <script type="text/javascript">google.load("jquery", "1.4.2");</script>
-    <style>
-        #container {
-            width: 720px;
-            margin: auto;
-        }
-        a {
-            text-decoration: none;
-            color: #999;
-        }
-        header h1 {
-            text-shadow: #eee 4px 4px 4px;
-        }
-        footer {
-            border-top: 1px solid #eee;
-            margin-top: 30px;
-            font-size: xx-small;
-        }
-        .module {
-            font-weight: bold;
-        }
-        .version {
-            font-weight: bold;
-        }
-        .btn {
-            color: #999;
-        }
-
-        nav {
-            margin: 4px;
-            margin-bottom: 4px;
-            display: block;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        nav li {
-            float: left;
-            margin: 0 0.25em;
-            padding: 8px;
-            font-size: x-large;
-            -webkit-box-shadow: #eeeeee 5px 5px 10px;
-            -moz-box-shadow: #eeeeee 10px 10px 10px;
-            box-shadow: #eeeeee 10px 10px 10px;
-        }
-        nav a {
-            text-decoration: none;
-            color: #999;
-        }
-
-        .clear-both { clear:both; }
-
-        #content {
-            margin-top: 20px;
-        }
-        #content #version-menu-body {
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.0.0/united/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div id="container">
-        <header>
-            <h1><a href="/">perl5 module corelist for web</a></h1>
-        </header>
-        <nav>
-            <ul>
-                <li><a href="/">top</a></li>
-                <li><a href="/version-list">version</a></li>
-            </ul>
-        </nav>
-        <div class="clear-both"></div>
-        <section id="content">
+        <div class="navbar navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Web::Module::CoreList</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Top</a></li>
+                        <li><a href="/version-list">Versions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
 

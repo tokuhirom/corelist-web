@@ -1,7 +1,7 @@
 [% INCLUDE 'include/header.tt' %]
 
-<h2>core modules in version [% version %]</h2>
-<table>
+<h2>Core modules in version [% version %]</h2>
+<table class="table table-hover">
     [% FOR k IN modules.keys().sort() %]
         <tr>
             <td align="left"><a href="/m/[% k %]">[% k %]</a></td>
